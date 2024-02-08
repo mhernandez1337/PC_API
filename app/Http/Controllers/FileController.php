@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\File;
 use Validator;
+use Illuminate\Support\Facades\App;
+use Config;
 
 class FileController extends Controller
 {
@@ -33,6 +35,8 @@ class FileController extends Controller
         $fullFileName = $originalFileName . $fileExtension;
 
         $filePath = $request->file('file')->storeAs('public/file/' . $request->name, $fullFileName);
+        $filePath = substr($filePath, 7);
+        $filePath = \Config::get('app.url') . Config::get('app.storage_path') . $filePath;
 
         $file = File::create([
             'name' => $request->name,
