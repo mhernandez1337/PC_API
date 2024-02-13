@@ -24,6 +24,7 @@ Route::group([
 ], function(){
     Route::get('', 'FileController@index');
     Route::post('store', 'FileController@store');
+    Route::get('{id}', 'FileController@single');
 });
 
 Route::group([
@@ -32,4 +33,5 @@ Route::group([
 ], function(){
     Route::get('', 'ArgumentController@index');
     Route::post('store', 'ArgumentController@store');
+    Route::get('{id}', 'ArgumentController@single');
 });

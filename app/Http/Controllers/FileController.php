@@ -17,6 +17,26 @@ class FileController extends Controller
         return response()->json(['status' => 'success', 'data' => $files], 200);
     }
 
+    public function single($id){
+        $rules = [
+            'id'    =>  'required'
+        ];
+
+        $data = [
+            'id'    => $id
+        ];
+
+        $validator = Validator::make($data,$rules);
+
+        if($validator->fails()){
+            return response()->json(['status' => 'fail', 'data' => $validator->messages()], 400);
+        }
+
+        $file = File::find($id);
+
+        return response()->json(['status' => 'success', 'data' => $file], 200);
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -46,4 +46,24 @@ class ArgumentController extends Controller
 
         return response()->json(['status' => 'success', 'data' => $argument], 200);
     }
+
+    function single($id) {
+        $rules = [
+            'id'    =>  'required'
+        ];
+
+        $data = [
+            'id'    => $id
+        ];
+
+        $validator = Validator::make($data,$rules);
+
+        if($validator->fails()){
+            return response()->json(['status' => 'fail', 'data' => $validator->messages()], 400);
+        }
+
+        $argument = Argument::find($id);
+
+        return response()->json(['status' => 'success', 'data' => $argument], 200);
+    }
 }
