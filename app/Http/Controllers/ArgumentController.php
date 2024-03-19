@@ -122,7 +122,7 @@ class ArgumentController extends Controller
         $query->where('title', 'like', '%' . $keyword . '%');
         // ->orWhere('docket_num', 'like', '%' . $keyword . '%')
         // ->orWhere('docket_num', 'like', '%' . $keyword . '%')
-        // ->orWhere('first_name', 'like', '%' . $keyword . '%');
+        // ->orWhere('first_name', 'like', '%' . $keyword . '%');x
 
         $events = $query->paginate($returnTotal);
 
