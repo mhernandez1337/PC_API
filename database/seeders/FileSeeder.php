@@ -1,9 +1,11 @@
 <?php
 
 namespace Database\Seeders;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Seeder;
 use App\Models\File;
+
+use Config;
 
 class FileSeeder extends Seeder
 {
@@ -14,12 +16,29 @@ class FileSeeder extends Seeder
      */
     public function run()
     {
-        //Create file
-        File::create([
-        'name' => 'test_file',
-        'path' => 'some\path\test_file.mp3',
-        'type' => 'mp3'
-        ]);
+        for($i = 1; $i <= 16; $i++){
+
+            $filePath = Storage::disk('public')->get('Test Audio Files/Test_' . $i . '.mp3');
+
+            $fileExtension = pathinfo(public_path('Test Audio Files/Test_' . $i . '.mp3'), PATHINFO_EXTENSION);
+
+            $originalFileName = pathinfo(public_path('Test Audio Files/Test_' . $i . '.mp3'), PATHINFO_FILENAME);
+
+            $fullFileName = $originalFileName . '.' . $fileExtension;
+            $fullFilePath = 'file/' . $originalFileName . '/' . $fullFileName;
+
+            $filePath = Storage::disk('public')->put($fullFilePath, $filePath);
+
+            $filePath = \Config::get('app.url') . Config::get('app.storage_path') . $fullFilePath;
+
+            //Create file
+            File::create([
+                'name' => 'test_file_' . $i,
+                'path' => $filePath,
+                'type' => 'mp3'
+            ]);
+        }
+
 
     }
 }
