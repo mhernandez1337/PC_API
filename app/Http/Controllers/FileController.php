@@ -54,13 +54,15 @@ class FileController extends Controller
         }
 
         $fileExtension = $request->file('file')->extension();
+        echo "fileex " . $fileExtension;
 
         $originalFileName = $request->file('file')->getClientOriginalName();
-
+        echo "origin " . $originalFileName;
         $fullFileName = $originalFileName . $fileExtension;
 
         $filePath = $request->file('file')->storeAs('public/file/' . $request->name, $fullFileName);
         $filePath = substr($filePath, 7);
+        echo "filePath " . $filePath;
         $filePath = \Config::get('app.url') . Config::get('app.storage_path') . $filePath;
 
         $file = File::create([
