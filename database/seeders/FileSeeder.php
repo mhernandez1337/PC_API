@@ -29,9 +29,7 @@ class FileSeeder extends Seeder
 
             $filePath = Storage::disk('public')->put($fullFilePath, $filePath);
 
-            // $filePath = \Config::get('app.url') . Config::get('app.storage_path') . $fullFilePath;
-
-            $filePath = Storage::disk('public')->path($filePath);
+            $filePath = \Config::get('app.url') . Config::get('app.storage_path') . $fullFilePath;
 
             //Create file
             File::create([
