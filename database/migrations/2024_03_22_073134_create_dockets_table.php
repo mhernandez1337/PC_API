@@ -21,6 +21,7 @@ class CreateDocketsTable extends Migration
             $table->text('summary');
             $table->string('panel');
             $table->string('location');
+            $table->tinyInteger('active')->default(1);
             $table->integer('event_id');
             $table->timestamps();
         });
