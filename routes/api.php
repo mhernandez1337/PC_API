@@ -44,7 +44,7 @@ Route::group([
 
 Route::group([
     'namespace' =>  'App\Http\Controllers',
-    'prefix'    =>  'events'
+    'prefix'    =>  'arguments'
 ], function(){
     Route::get('', 'ArgumentController@index');
     Route::post('store', 'ArgumentController@store');
@@ -65,6 +65,43 @@ Route::group([
     Route::post('search/{returnTotal}', 'UserController@search');
     Route::post('update-password', 'UserController@updatePassword');
 });
+
+Route::group([
+    'namespace' => 'App\Http\Controllers',
+    'prefix'    => 'events'
+], function(){
+    Route::get('', 'EventController@index');
+    Route::get('{id}', 'EventController@show');
+    Route::get('urlkey/{url_key}', 'EventController@findByUrlKey');
+});
+
+Route::group([
+    'namespace' => 'App\Http\Controllers',
+    'prefix'    => 'synopses'
+], function(){
+    Route::get('', 'SynopsesController@index');
+    Route::get('allcoasynopses/{returnTotal}', 'SynopsesController@getAllCOASynopses');
+    Route::get('allsynopses/{returnTotal}', 'SynopsesController@getAllSynopses');
+    Route::post('search/{returnTotal}', 'SynopsesController@search');
+    Route::post('update/{id}', 'SynopsesController@update');
+    Route::get('{id}', 'SynopsesController@show');
+    Route::post('create', 'SynopsesController@create');
+});
+
+Route::group([
+    'namespace' => 'App\Http\Controllers',
+    'prefix'    => 'recordings'
+], function(){
+    Route::get('', 'RecordingController@index');
+    Route::post('create', 'RecordingController@create');
+    Route::get('allcoarecordings/{returnTotal}', 'RecordingController@getAllCOARecordings');
+    Route::get('allpublichearings/{returnTotal}', 'RecordingController@getAllPublicHearings');
+    Route::get('allrecordings/{returnTotal}', 'RecordingController@getAllRecordings');
+    Route::post('search/{returnTotal}', 'RecordingController@search');
+    Route::post('update/{id}', 'RecordingController@update');
+    Route::get('{id}', 'RecordingController@show');
+});
+
 
 /** Authenication Error Response */
 Route::any('auth_err_res', function () {
