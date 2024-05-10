@@ -2,12 +2,16 @@
 <IfModule mod_negotiation.c>
     Options -MultiViews
 </IfModule>
-
+php_flag opcache.enable Off
 RewriteEngine On
 
 # Redirect Trailing Slashes If Not A Folder...
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/$public /$1 [L,R=301]
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^(.*)/$public /$1 [L,R=301]
+
+# Redirect Trailing Slashes If Not A Folder…
+ RewriteCond %{REQUEST_FILENAME} !-d
+ RewriteRule ^(.*)/$ /$1 [L,R=307]
 
 # Handle Front Controller...
 RewriteCond %{REQUEST_FILENAME} !-d
