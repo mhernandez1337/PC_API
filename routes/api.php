@@ -110,7 +110,7 @@ Route::group([
     Route::get('coasynopses/{returnTotal}', 'SiteController@getCOASynopses');
     Route::get('publichearings/{returnTotal}', 'SiteController@getPublicHearings');
     Route::get('recordings/{returnTotal}', 'SiteController@getRecordings');
-    Route::post('search/{returnTotal}', 'SiteController@search');
+    Route::post('search/{returnTotal}/', 'SiteController@search');
     Route::get('synopses/{returnTotal}', 'SiteController@getSynopses');
     Route::get('urlkey/{url_key}', 'SiteController@findByUrlKey');
 });
