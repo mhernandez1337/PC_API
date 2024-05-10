@@ -102,6 +102,19 @@ Route::group([
     Route::get('{id}', 'RecordingController@show');
 });
 
+Route::group([
+    'namespace' => 'App\Http\Controllers',
+    'prefix'    => 'site'
+], function(){
+    Route::get('coarecordings/{returnTotal}', 'SiteController@getCOARecordings');
+    Route::get('coasynopses/{returnTotal}', 'SiteController@getCOASynopses');
+    Route::get('publichearings/{returnTotal}', 'SiteController@getPublicHearings');
+    Route::get('recordings/{returnTotal}', 'SiteController@getRecordings');
+    Route::post('search/{returnTotal}', 'SiteController@search');
+    Route::get('synopses/{returnTotal}', 'SiteController@getSynopses');
+    Route::get('urlkey/{url_key}', 'SiteController@findByUrlKey');
+});
+
 
 /** Authenication Error Response */
 Route::any('auth_err_res', function () {

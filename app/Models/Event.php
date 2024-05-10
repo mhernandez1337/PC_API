@@ -24,7 +24,7 @@ class Event extends Model
     }
 
     public function recording() {
-        return $this->hasMany('App\Models\Recording', 'event_id', 'id')->orderBy('id');
+        return $this->hasOne('App\Models\Recording', 'event_id', 'id')->orderBy('id');
     }
 
     public function recordingContent() {
