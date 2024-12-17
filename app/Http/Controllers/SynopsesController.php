@@ -76,7 +76,7 @@ class SynopsesController extends Controller
      */
     public function getAllCOASynopses($returnTotal)
     {
-        $synopses = Event::orderBy('date', 'DESC')->Where('type','coa_synopsis')->with('dockets')->paginate($returnTotal);
+        $synopses = Event::orderBy('date', 'DESC')->where('type','coa_synopsis')->with('dockets')->paginate($returnTotal);
 
         return response()->json(['status' => 'success', 'data' => $synopses], 200);
     }
@@ -211,14 +211,15 @@ class SynopsesController extends Controller
 
         $keyword = $request->search;
 
-        $query = Event::orderBy('id');
+        $query = Event::orderBy('id')->where('type', '=', $request->type);
 
-        $query->where('title', 'like', '%' . $keyword . '%');
-        // ->orWhere('docket_num', 'like', '%' . $keyword . '%')
-        // ->orWhere('docket_num', 'like', '%' . $keyword . '%')
-        // ->orWhere('first_name', 'like', '%' . $keyword . '%');x
+        if($request->searchType == 'title'){
+            $query->where('title', 'like', '%' . $keyword . '%');
+        }elseif($request->searchType == 'date'){
+            $query->where('date', '=', $keyword);
+        }
 
-        $events = $query->where('type', '=', $request->type)->with('dockets')->paginate($returnTotal);
+        $events = $query->with('recordingContent')->with('recording')->paginate($returnTotal);
 
         return response()->json(['status' => 'success', 'data' => $events], 200);
     }

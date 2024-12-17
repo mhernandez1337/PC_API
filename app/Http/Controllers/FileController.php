@@ -53,16 +53,12 @@ class FileController extends Controller
             return response()->json(['status' => 'fail', 'data' => $validator->messages()], 400);
         }
 
-        // $fileExtension = $request->file('file')->extension(); //mp3
-        // echo "fileex " . $fileExtension;
-
         $originalFileName = $request->file('file')->getClientOriginalName(); //test_1.mp3
-        // echo "origin " . $originalFileName;
-        // $fullFileName = $originalFileName . $fileExtension;
+
 
         $filePath = $request->file('file')->storeAs('public/file/' . $request->name, $originalFileName);
         $filePath = substr($filePath, 7);
-        // echo "filePath " . $filePath;
+
         $filePath = \Config::get('app.url') . Config::get('app.storage_path') . $filePath;
 
         $file = File::create([

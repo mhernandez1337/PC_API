@@ -124,10 +124,8 @@ class UserController extends Controller
 
     public function paginate($status, $returnTotal)
     {
-        //
         $users = User::orderBy('last_name')->where('active', '=', $status)->paginate($returnTotal);
 
-        
         return response()->json(['status' => 'success', 'data' => $users], 200);
     }
 
@@ -138,13 +136,15 @@ class UserController extends Controller
 
         $query = User::orderBy('last_name');
 
-        $query->where('last_name', 'like', '%' . $keyword . '%')
-        ->orWhere('first_name', 'like', '%' . $keyword . '%');
-        // ->orWhere('docket_num', 'like', '%' . $keyword . '%')
-        // ->orWhere('first_name', 'like', '%' . $keyword . '%');
+        if($request->searchType == 'name'){
+            $query->where('last_name', 'like', '%' . $keyword . '%')
+            ->orWhere('first_name', 'like', '%' . $keyword . '%');
+        }else{
+            $query->where('email', 'like', '%' . $keyword . '%'); 
+        }
 
-        $files = $query->paginate($returnTotal);
+        $users = $query->paginate($returnTotal);
 
-         return response()->json(['status' => 'success', 'data' => $files], 200);
+         return response()->json(['status' => 'success', 'data' => $users], 200);
     }
 }

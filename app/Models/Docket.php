@@ -21,4 +21,8 @@ class Docket extends Model
         'event_id',
         'active'
     ];
+
+    public function dockets(){
+        return $this->belongsTo('App/Models/Event', 'id', 'event_id');
+    }
 }

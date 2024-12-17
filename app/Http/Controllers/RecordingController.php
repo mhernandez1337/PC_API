@@ -6,7 +6,8 @@ use App\Models\Recording;
 use App\Models\RecordingContent;
 use Illuminate\Http\Request;
 use App\Models\Event;
-use Validator;
+use App\Models\File;
+use Validator, Config;
 
 class RecordingController extends Controller
 {
@@ -35,7 +36,8 @@ class RecordingController extends Controller
         
         $url_key = str_replace(" ", "_", $request->title);
         $request->request->add(['url_key' => $url_key]);
-
+        $tempContent[] = json_decode($request->content);
+        // print_r($tempContent[0]);
         $validator = Validator::make($request->all(), $rules = [
             'title'             => 'required',
             'date'              => 'required',
@@ -46,17 +48,30 @@ class RecordingController extends Controller
             'time'              => 'required',
             'note'              => '',
             'appearances'       => '',
-            'link'              => '',
-            'content'           => 'array',
-            'content.*.time'    => '',
-            'content.*.speaker' => '',
-            'content.*.note'    => ''
+            // 'content'           => 'array',
+            // 'content.*.time'    => '',
+            // 'content.*.speaker' => '',
+            // 'content.*.note'    => '',
+            'file_name'         => 'required',
+            'file'              => 'required'
         ]);
 
         if($validator->fails()){
             return response()->json(['status' => 'fail', 'data' => $validator->messages()], 400);
         }
 
+        $originalFileName = $request->file_name;
+
+        $filePath = $request->file('file')->storeAs('public/file/' . $request->name, $originalFileName);
+        $filePath = substr($filePath, 7);
+
+        $filePath = \Config::get('app.url') . Config::get('app.storage_path') . $filePath;
+
+        $file = File::create([
+            'name' => $request->file_name,
+            'path' => $filePath,
+            'type' => 'mp3'
+        ]);
 
         $event = Event::create([
             'title'         => $request->title,
@@ -65,6 +80,15 @@ class RecordingController extends Controller
             'url_key'       => $request->url_key
         ]);
 
+        foreach($tempContent[0] as $ck){
+            $content = RecordingContent::create([
+                'time'      => $ck->time,
+                'speaker'   => $ck->speaker,
+                'note'      => $ck->note,
+                'event_id'  => $event->id
+            ]);
+        }
+
         $recording = Recording::create([
             'title'         => $request->title,
             'docket_num'    => $request->docket_num,
@@ -72,18 +96,11 @@ class RecordingController extends Controller
             'location'      => $request->location,
             'note'          => $request->note,
             'appearances'   => $request->appearances,
-            'link'          => $request->link,
+            'link'          => $filePath,
             'event_id'      => $event->id
         ]);
 
-        foreach($request->content as $ck){
-            $content = RecordingContent::create([
-                'time'      => $ck['time'],
-                'speaker'   => $ck['speaker'],
-                'note'      => $ck['note'],
-                'event_id'  => $event->id
-            ]);
-        }
+        
 
         return $this->show($event->id);
     }
@@ -169,6 +186,8 @@ class RecordingController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $tempArray[] = json_decode($request->content);
+
         $validator = Validator::make($request->all(), $rules = [
             'title'             => 'required',
             'date'              => 'required',
@@ -178,13 +197,13 @@ class RecordingController extends Controller
             'time'              => 'required',
             'note'              => '',
             'appearances'       => '',
-            'link'              => '',
-            'content'           => 'array',
-            'content.*.time'    => '',
-            'content.*.speaker' => '',
-            'content.*.note'    => '',
-            'content.*.active'  => '',
-            'content.*.id'  => '',
+            'link'              => ''
+            // 'content'           => 'array',
+            // 'content.*.time'    => '',
+            // 'content.*.speaker' => '',
+            // 'content.*.note'    => '',
+            // 'content.*.active'  => '',
+            // 'content.*.id'  => '',
         ]);
 
         if($validator->fails()){
@@ -204,6 +223,17 @@ class RecordingController extends Controller
 
         $recording = Recording::where('event_id', '=', $event->id)->first();
 
+        if($request->file_change == 'true'){
+            $originalFileName = $request->file_name;
+
+            $filePath = $request->file('file')->storeAs('public/file/' . $request->name, $originalFileName);
+            $filePath = substr($filePath, 7);
+
+            $filePath = \Config::get('app.url') . Config::get('app.storage_path') . $filePath;
+        }else{
+            $filePath = $request->link;
+        }
+
         if($recording){
             $recording->fill([
                 'title'         => $request->title,
@@ -212,29 +242,37 @@ class RecordingController extends Controller
                 'location'      => $request->location,
                 'note'          => $request->note,
                 'appearances'   => $request->appearances,
-                'link'          => $request->link
+                'link'          => $filePath
             ]);
             $recording->save();
         }
+
         
-        if(count($request->content) > 0){
-            foreach($request->content as $ck){
-                if($ck['id']){
-                    $content = RecordingContent::where('id', '=', $ck['id'])->first();
+
+        // $file = File::where('id', '=', ([
+        //     'name' => $request->file_name,
+        //     'path' => $filePath,
+        //     'type' => 'mp3'
+        // ]);
+        
+        if(count($tempArray[0]) > 0){
+            foreach($tempArray[0] as $ck){
+                if($ck->id){
+                    $content = RecordingContent::where('id', '=', $ck->id)->first();
                     $content->fill([
-                        'time'      => $ck['time'],
-                        'speaker'   => $ck['speaker'],
-                        'note'      => $ck['note'],
-                        'active'    => $ck['active'],
+                        'time'      => $ck->time,
+                        'speaker'   => $ck->speaker,
+                        'note'      => $ck->note,
+                        'active'    => $ck->active,
                         'event_id'  => $event->id
                     ]);
                     $content->save();
                 }else{
                     $content = RecordingContent::create([
-                        'time'      => $ck['time'],
-                        'speaker'   => $ck['speaker'],
-                        'note'      => $ck['note'],
-                        'active'    => $ck['active'],
+                        'time'      => $ck->time,
+                        'speaker'   => $ck->speaker,
+                        'note'      => $ck->note,
+                        'active'    => $ck->active,
                         'event_id'  => $event->id
                     ]);
                 }
@@ -267,15 +305,20 @@ class RecordingController extends Controller
 
         $keyword = $request->search;
 
-        $query = Event::orderBy('id');
+        $query = Event::orderBy('id')->where('type', '=', $request->type);
 
-        $query->where('title', 'like', '%' . $keyword . '%');
-        // ->orWhere('docket_num', 'like', '%' . $keyword . '%')
-        // ->orWhere('docket_num', 'like', '%' . $keyword . '%')
-        // ->orWhere('first_name', 'like', '%' . $keyword . '%');x
+        if($request->searchType == 'title'){
+            $query->where('title', 'like', '%' . $keyword . '%');
+        }elseif($request->searchType == 'docket_num'){
+            $query->whereHas('recording', function($query) use ($keyword){
+                $query->where('docket_num', '=', $keyword);
+            });
+        }elseif($request->searchType == 'date'){
+            $query->where('date', '=', $keyword);
+        }
 
-        $events = $query->where('type', '=', $request->type)->with('recordingContent')->with('recording')->paginate($returnTotal);
+        $events = $query->with('recordingContent')->with('recording')->paginate($returnTotal);
 
-         return response()->json(['status' => 'success', 'data' => $events], 200);
+        return response()->json(['status' => 'success', 'data' => $events], 200);
     }
 }
