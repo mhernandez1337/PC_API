@@ -32,6 +32,17 @@ Route::group([
 
 Route::group([
     'namespace' => 'App\Http\Controllers',
+    'prefix'    => 'public'
+], function(){
+    Route::get('event/{id}', 'PublicController@show');
+    Route::post('recordings/{eventType}/{returnTotal}', 'PublicController@recordings');
+    Route::post('search/recordings/{returnTotal}', 'PublicController@searchRecordings');
+    Route::post('search/synopsis/{returnTotal}', 'PublicController@searchSynopsis');
+    Route::post('synopsis/{eventType}/{returnTotal}', 'PublicController@synopsis');
+});
+
+Route::group([
+    'namespace' => 'App\Http\Controllers',
     'prefix'    => 'files'
 ], function(){
     Route::get('', 'FileController@index');

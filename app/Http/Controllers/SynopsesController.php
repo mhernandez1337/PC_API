@@ -219,7 +219,7 @@ class SynopsesController extends Controller
             $query->where('date', '=', $keyword);
         }
 
-        $events = $query->with('recordingContent')->with('recording')->paginate($returnTotal);
+        $events = $query->with('dockets')->paginate($returnTotal);
 
         return response()->json(['status' => 'success', 'data' => $events], 200);
     }
