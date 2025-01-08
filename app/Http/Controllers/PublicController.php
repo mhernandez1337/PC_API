@@ -7,13 +7,17 @@ use App\Models\Event;
 
 class PublicController extends Controller
 {
+    public function __construct(){
+        // $this->middleware('apikey');
+    }
     /**
      * Get all recording types with their associated relationships
      * 
      * @return \Illuminate\Http\Response
      */
-    public function recordings($eventType, $returnTotal)
+    public function recordings(Request $request, $eventType, $returnTotal)
     {
+
         $events = Event::orderBy('date', 'DESC')->where('type', '=', $eventType)->with('recording')->with('recordingContent')->paginate($returnTotal);
 
         return response()->json(['status' => 'success', 'data' => $events], 200);

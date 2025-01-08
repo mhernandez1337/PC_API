@@ -122,7 +122,7 @@ return [
     */
 
     'key' => env('APP_KEY'),
-
+    'api_key' => env('API_KEY'),
     'cipher' => 'AES-256-CBC',
 
     /*
@@ -232,6 +232,5 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
-    ],
-
+    ]
 ];
