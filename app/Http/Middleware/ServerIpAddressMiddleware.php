@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class ApiKeyMiddleware
+class ServerIpAddressMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,14 +16,14 @@ class ApiKeyMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $apiKey = config('app.api_key');
+        $serverIpAddress = config('app.server_ip');
 
-        $apiKeyIsValid = (
-            filled($apiKey)
-            && $request->header('x-api-key') === $apiKey
+        $serverIpIsValid = (
+            filled($serverIpAddress)
+            && gethostbyname($_SERVER['SERVER_NAME']) === $serverIpAddress
         );
 
-        abort_if (! $apiKeyIsValid, 403, 'Access denied');
+        abort_if (! $serverIpIsValid, 403, 'Access denied');
 
         return $next($request);
     }

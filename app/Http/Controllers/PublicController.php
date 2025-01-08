@@ -9,6 +9,7 @@ class PublicController extends Controller
 {
     public function __construct(){
         // $this->middleware('apikey');
+        $this->middleware('serverIp');
     }
     /**
      * Get all recording types with their associated relationships
@@ -17,8 +18,6 @@ class PublicController extends Controller
      */
     public function recordings(Request $request, $eventType, $returnTotal)
     {
-        echo gethostbyname($_SERVER['SERVER_NAME']);
-
         $events = Event::orderBy('date', 'DESC')->where('type', '=', $eventType)->with('recording')->with('recordingContent')->paginate($returnTotal);
 
         return response()->json(['status' => 'success', 'data' => $events], 200);
