@@ -17,6 +17,7 @@ class PublicController extends Controller
      */
     public function recordings(Request $request, $eventType, $returnTotal)
     {
+        echo request()->ip();
 
         $events = Event::orderBy('date', 'DESC')->where('type', '=', $eventType)->with('recording')->with('recordingContent')->paginate($returnTotal);
 
